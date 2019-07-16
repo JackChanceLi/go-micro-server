@@ -2,8 +2,24 @@ package main
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"log"
 	"net/http"
 )
+
+type middleWareHandler struct {
+	r *httprouter.Router
+}
+
+func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
+	m := middleWareHandler{}
+	m.r = r
+	return m
+}
+
+func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	validateUserSession(r)
+	m.r.ServeHTTP(w, r)
+}
 
 func handler () *httprouter.Router {
 	router := httprouter.New()
@@ -16,7 +32,9 @@ func handler () *httprouter.Router {
 
 func main() {
 	r := handler()
-	http.ListenAndServe(":9090",r)
+	mh := NewMiddleWareHandler(r)
+	log.Printf("Server start\n")
+	http.ListenAndServe(":9090",mh)
 
 }
 //func main() {
