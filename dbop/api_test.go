@@ -1,6 +1,8 @@
 package dbop
 
-import "testing"
+import (
+	"testing"
+)
 
 func dbClear(){
 	dbConn.Exec("truncate user_information")
@@ -19,7 +21,7 @@ func TestUserWorkFlow(t *testing.T) {
 }
 
 func testUserRegister(t *testing.T) {
-	err := userRegister("zheng","1258@gmail.com","000000")
+	err := UserRegister("zheng","1258@gmail.com","000000",1)
 	if err != nil {
 		t.Errorf("Error of register: %v", err)
 	}

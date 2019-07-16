@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"go-micro-server/utils"
 	"log"
 )
 
@@ -27,13 +28,15 @@ func userLogin(loginName string,) (string, error) {
 	defer actOut.Close()
 	return password,nil
 }
-func userRegister(userName string, email string, password string) error {
-	actIns,err := dbConn.Prepare("INSERT  INTO user_information (user_name, email, user_passwd) VALUES (?, ?, ?)")
+func UserRegister(userName string, email string, password string, role int) error {
+	uid, _ := utils.NewUUID()
+	log.Printf("uid:%s",uid)
+	actIns,err := dbConn.Prepare("INSERT  INTO user_information (user_id, user_name, email, user_passwd, role) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 
-	_, err = actIns.Exec(userName, email, password)
+	_, err = actIns.Exec(uid, userName, email, password, role)
 	if err != nil {
 		return err
 	}
