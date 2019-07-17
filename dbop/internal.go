@@ -24,7 +24,7 @@ func InsertSession(sid string, ttl int64, uname string) error {
 	return  nil
 }
 
-func retrieveSession(sid string) (*defs.Session, error) {
+func RetrieveSession(sid string) (*defs.Session, error) {
 	ss := &defs.Session{}
 	stmtOut, err := dbConn.Prepare("SELECT TTL, login_name FROM sessions WHERE session_id = ?")
 	if err != nil {
@@ -64,14 +64,14 @@ func RetrieveAllSessions() (*sync.Map, error) {
 	for rows.Next() {
 		var id string
 		var ttlstr string
-		var login_name string
-		if er := rows.Scan(&id, &ttlstr, &login_name); er != nil {
+		var loginName string
+		if er := rows.Scan(&id, &ttlstr, &loginName); er != nil {
 			log.Printf("retrieve sessions error: %s", er)
 			break
 		}
 
 		if ttl, err1 := strconv.ParseInt(ttlstr, 10, 64); err1 == nil {
-			ss := &defs.Session{UserName:login_name, TTL:ttl}
+			ss := &defs.Session{UserName:loginName, TTL:ttl}
 			m.Store(id,ss)
 			log.Printf("Session id:%s, ttl:%d", id, ss.TTL)
 		}
