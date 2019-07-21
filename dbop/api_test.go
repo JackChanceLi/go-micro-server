@@ -1,6 +1,7 @@
 package dbop
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -18,6 +19,7 @@ func TestMain(m *testing.M) {
 func TestUserWorkFlow(t *testing.T) {
 	t.Run("register", testUserRegister)
 	t.Run("login", testUserLogin)
+	t.Run("time",testGetCurrentTime)
 }
 
 func testUserRegister(t *testing.T) {
@@ -34,5 +36,13 @@ func testUserLogin(t *testing.T) {
 	}
 	if err != nil {
 		t.Errorf("Error of login: %v", err)
+	}
+}
+
+func testGetCurrentTime(t *testing.T) {
+	tNow, err:= getCurrentTime()
+	fmt.Printf("Time now:%s\n", tNow)
+	if err != nil {
+		t.Errorf("Error of time format:%s", err)
 	}
 }

@@ -61,6 +61,7 @@ func RetrieveAllSessions() (*sync.Map, error) {
 		log.Printf("%s", err)
 		return nil,err
 	}
+	log.Println("All sessions in DB are:")
 	for rows.Next() {
 		var id string
 		var ttlstr string
@@ -69,7 +70,6 @@ func RetrieveAllSessions() (*sync.Map, error) {
 			log.Printf("retrieve sessions error: %s", er)
 			break
 		}
-
 		if ttl, err1 := strconv.ParseInt(ttlstr, 10, 64); err1 == nil {
 			ss := &defs.Session{UserName:loginName, TTL:ttl}
 			m.Store(id,ss)

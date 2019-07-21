@@ -15,6 +15,7 @@ var sessionMap *sync.Map
 
 func init() {
 	sessionMap = &sync.Map{}
+	loadSessionFromDB()
 }
 
 func deleteExpiredSession(sid string) {
