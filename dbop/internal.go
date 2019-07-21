@@ -93,3 +93,16 @@ func DeleteSession(sid string) error {
 
 	return nil
 }
+func DeleteSessionByName(LoginName string) error {
+	stmtOut, err := dbConn.Prepare("DELETE FROM sessions WHERE login_name = ?")
+	if err != nil {
+		log.Printf("%s",err)
+		return err
+	}
+
+	if _, err := stmtOut.Query(LoginName); err != nil {
+		return err
+	}
+
+	return nil
+}

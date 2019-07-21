@@ -43,6 +43,7 @@ func GenerateNewSessionID(un string) string {
 	ttl := ct + 30 * 60 * 1000
 	ss := &defs.Session{UserName:un, TTL:ttl}
 	sessionMap.Store(id, ss)
+	dbop.DeleteSessionByName(un)
 	dbop.InsertSession(id, ttl, un)
 
 	return id
