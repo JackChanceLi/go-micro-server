@@ -26,6 +26,7 @@ func handler () *httprouter.Router {
 	router.POST("/",Handle)
 	router.POST("/user/login", Login)
 	router.POST("/user/register", Register)
+	router.POST("/user/ :session_id",LoginBySessionID)
 
 	return router
 }

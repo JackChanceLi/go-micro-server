@@ -16,6 +16,11 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	fmt.Fprintf(w, "Login success!\n")
 }
 
+func LoginBySessionID(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	//sessionID := ps.ByName("session_id")
+	fmt.Fprintf(w, "session success!\n")
+
+}
 func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	res, err := ioutil.ReadAll(r.Body)
 	fmt.Println(res)
