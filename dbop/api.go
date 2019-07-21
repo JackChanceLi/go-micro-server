@@ -22,7 +22,7 @@ func getCurrentTime() (string, error) {
 	return timeNow, nil
 }
 
-func userLogin(loginName string,) (string, error) {
+func UserLogin(loginName string) (string, error) {
 	actOut,err := dbConn.Prepare("SELECT user_passwd from user_information WHERE user_name = ?")
 	if err != nil {
 		log.Printf("%s", err)

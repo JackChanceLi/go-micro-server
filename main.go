@@ -24,9 +24,9 @@ func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func handler () *httprouter.Router {
 	router := httprouter.New()
 	router.POST("/",Handle)
-	router.POST("/user/login", Login)
 	router.POST("/user/register", Register)
-	router.POST("/user/ :session_id",LoginBySessionID)
+	router.POST("/user/login_by_sessionid/:session_id",LoginBySessionID)
+	router.POST("/user/login_by_name/:user_name",LoginByName)
 
 	return router
 }

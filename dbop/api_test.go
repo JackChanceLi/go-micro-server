@@ -30,7 +30,7 @@ func testUserRegister(t *testing.T) {
 }
 
 func testUserLogin(t *testing.T) {
-	password,err := userLogin("zheng")
+	password,err := UserLogin("zheng")
 	if password != "000000" {
 		t.Errorf("Error of user login for wrong password:%s",password)
 	}

@@ -12,8 +12,42 @@ import (
 	"net/http"
 )
 
-func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	fmt.Fprintf(w, "Login success!\n")
+func LoginByName(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	res, err := ioutil.ReadAll(r.Body)
+	fmt.Println(res)
+	if err != nil {
+		log.Printf("Http body read failed")
+	}
+	ubody := &defs.UserIdentity{}
+	//解析包
+	if err := json.Unmarshal(res, ubody); err != nil {
+		fmt.Println(ubody)
+		sendErrorResponse(w, defs.ErrRequestBodyParseFailed)
+		return
+	}
+	fmt.Println(ubody)
+	password,err := dbop.UserLogin(ubody.UserName)
+	if err != nil {
+		sendErrorResponse(w, defs.ErrorDBError)
+		return
+	}
+
+	if password == ubody.Passwd {
+		//fmt.Println("Login successfully!")
+
+		id := session.GenerateNewSessionID(ubody.UserName)
+		su := &defs.SignedUp{Success:true, SessionId:id}
+
+		if resp, err := json.Marshal(su); err != nil {
+			sendErrorResponse(w, defs.ErrorInternalFaults)
+			return
+		} else {
+			sendNormalResponse(w, string(resp),201)
+		}
+	} else {
+		sendErrorResponse(w, defs.ErrorNotAuthUser)
+		return
+	}
 }
 
 func LoginBySessionID(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
