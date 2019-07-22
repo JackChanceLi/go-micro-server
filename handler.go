@@ -11,7 +11,7 @@ import (
 	"log"
 	"net/http"
 )
-
+//通过用户名、密码登录验证
 func LoginByName(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	res, err := ioutil.ReadAll(r.Body)
 	fmt.Println(res)
@@ -49,12 +49,13 @@ func LoginByName(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 }
-
+//通过sessionID进行用户登录验证
 func LoginBySessionID(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	//sessionID := ps.ByName("session_id")
 	fmt.Fprintf(w, "session success!\n")
 
 }
+//用户注册的实现，包含用户名、密码、邮箱、权限等信息
 func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	res, err := ioutil.ReadAll(r.Body)
 	fmt.Println(res)
@@ -85,7 +86,7 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 	//fmt.Fprintf(w, "Request success!\n")
 }
-
+//路由测试函数，目前没有太大用处
 func Handle(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	fmt.Fprintf(w, "No http router\n")
 }
