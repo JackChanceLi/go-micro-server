@@ -34,7 +34,7 @@ func handler () *httprouter.Router {
 func main() {
 	r := handler()
 	mh := NewMiddleWareHandler(r)
-	log.Printf("Server start\n")
+	log.Printf("Server start1\n")
 	http.ListenAndServe(":9090",mh)
 
 }

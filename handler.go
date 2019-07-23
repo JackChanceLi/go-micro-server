@@ -19,6 +19,7 @@ func LoginByName(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		log.Printf("Http body read failed")
 	}
 	ubody := &defs.UserIdentity{}
+	w.Header().Set("Access-Control-Allow-Origin","*")
 	//解析包
 	if err := json.Unmarshal(res, ubody); err != nil {
 		fmt.Println(ubody)
@@ -70,19 +71,20 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 	fmt.Println(ubody)
-	if err := dbop.UserRegister(ubody.UserName, ubody.Email, ubody.Passwd, ubody.Role); err != nil {
+	role := 1
+	if err := dbop.UserRegister(ubody.UserName, ubody.Email, ubody.Passwd, role); err != nil {
 		sendErrorResponse(w, defs.ErrorDBError)
 		return
 	}
 
-	id := session.GenerateNewSessionID(ubody.UserName)
-	su := &defs.SignedUp{Success:true, SessionId:id}
+	//id := session.GenerateNewSessionID(ubody.UserName)
+	su := &defs.SignedUp{Success:true, SessionId:""}
 
 	if resp, err := json.Marshal(su); err != nil {
 		sendErrorResponse(w, defs.ErrorInternalFaults)
 		return
 	} else {
-		sendNormalResponse(w, string(resp),201)
+		sendNormalResponse(w, string(resp),200)
 	}
 	//fmt.Fprintf(w, "Request success!\n")
 }
