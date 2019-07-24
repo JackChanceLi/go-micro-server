@@ -9,9 +9,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	//dbClear()
 	m.Run()
-	//dbClear()
 }
 
 func TestUserWorkFlow(t *testing.T) {

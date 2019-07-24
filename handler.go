@@ -12,14 +12,13 @@ import (
 	"net/http"
 )
 //通过用户名、密码登录验证
-func LoginByName(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func LoginByMail(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	res, err := ioutil.ReadAll(r.Body)
-	fmt.Println(res)
 	if err != nil {
 		log.Printf("Http body read failed")
 	}
 	ubody := &defs.UserIdentity{}
-	w.Header().Set("Access-Control-Allow-Origin","*")
+	w.Header().Set("Access-Control-Allow-Origin","*")  //"*"表示接受任意域名的请求，这个值也可以根据自己需要，设置成不同域名
 	//解析包
 	if err := json.Unmarshal(res, ubody); err != nil {
 		fmt.Println(ubody)
@@ -27,17 +26,18 @@ func LoginByName(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 	fmt.Println(ubody)
-	password,err := dbop.UserLogin(ubody.UserName)
+	userInfo, password, err := dbop.UserLogin(ubody.UserName)
+	fmt.Println(password)
+	fmt.Println(userInfo)
 	if err != nil {
 		sendErrorResponse(w, defs.ErrorDBError)
 		return
 	}
-
-	if password == ubody.Passwd {
+	if password == ubody.Password {
 		//fmt.Println("Login successfully!")
 
 		id := session.GenerateNewSessionID(ubody.UserName)
-		su := &defs.SignedUp{Success:true, SessionId:id}
+		su := &defs.SignedUp{Success:true, SessionId:id, Cid:userInfo.Cid, Name:userInfo.Name, Email:userInfo.Email, Auth:userInfo.Auth}
 
 		if resp, err := json.Marshal(su); err != nil {
 			sendErrorResponse(w, defs.ErrorInternalFaults)
@@ -50,12 +50,7 @@ func LoginByName(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 }
-//通过sessionID进行用户登录验证
-func LoginBySessionID(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	//sessionID := ps.ByName("session_id")
-	fmt.Fprintf(w, "session success!\n")
 
-}
 //用户注册的实现，包含用户名、密码、邮箱、权限等信息
 func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	res, err := ioutil.ReadAll(r.Body)
@@ -71,14 +66,11 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 	fmt.Println(ubody)
-	role := 1
-	if err := dbop.UserRegister(ubody.UserName, ubody.Email, ubody.Passwd, role); err != nil {
+	if err := dbop.UserRegister(ubody.UserName, ubody.Email, ubody.Password); err != nil {
 		sendErrorResponse(w, defs.ErrorDBError)
 		return
 	}
-
-	//id := session.GenerateNewSessionID(ubody.UserName)
-	su := &defs.SignedUp{Success:true, SessionId:""}
+	su := defs.Register{Success:true, Username:ubody.UserName}
 
 	if resp, err := json.Marshal(su); err != nil {
 		sendErrorResponse(w, defs.ErrorInternalFaults)
@@ -90,5 +82,5 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 //路由测试函数，目前没有太大用处
 func Handle(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	fmt.Fprintf(w, "No http router\n")
+	fmt.Fprintf(w, "111111111111111111111111111111\n")
 }
