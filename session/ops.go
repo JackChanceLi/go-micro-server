@@ -41,7 +41,7 @@ func GenerateNewSessionID(un string) string {
 	id, _ := utils.NewUUID()
 	ct := time.Now().UnixNano()/1000000   //生成ms级别的时间
 	ttl := ct + 30 * 60 * 1000  //设置用户session的有效期为30分钟
-	ss := &defs.Session{UserName:un, TTL:ttl}
+	ss := &defs.Session{Uid:un, TTL:ttl}
 	sessionMap.Store(id, ss)
 	dbop.DeleteSessionByName(un)
 	dbop.InsertSession(id, ttl, un)
@@ -58,7 +58,7 @@ func IsSessionExpired(sid string) (string, bool) {
 			deleteExpiredSession(sid)
 			return "", true
 		}
-		return ss.(*defs.Session).UserName, false
+		return ss.(*defs.Session).Uid, false
 	}
 	return "", true
 }

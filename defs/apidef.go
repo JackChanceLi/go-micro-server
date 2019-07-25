@@ -30,9 +30,26 @@ type Register struct {
 }
 //session处理字段
 type Session struct{
-	UserName string  //session对用的用户名
+	Uid string  //session对用的用户名
 	TTL      int64  //session的有效期
 }
+
+type LiveRoomIdentity struct {
+	Lid string `json:"lid"`
+	Name string  `json:"name"`
+	Kind string `json:"kind"`
+	Size string `json:"size"`
+	StartTime string `json:"start_time"`
+	EndTime string `json:"end_time"`
+	PushUrl string `json:"push_url"`
+	PullHlsUrl string `json:"pull_hls_url"`
+	PullRtmpUrl string `json:"pull_rtmp_url"`
+	PullHttpFlvUrl string `json:"pull_http_flv_url"`
+	DisplayUrl string `json:"display_url"`
+	Status string `json:"status"`
+	Permission string `json:"permission"`
+}
+
 
 var (
 	EmptyUser = UserInformation{Cid:"", Name:"", Email:"", Auth:""}

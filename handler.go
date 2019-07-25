@@ -26,7 +26,7 @@ func LoginByMail(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 	fmt.Println(ubody)
-	userInfo, password, err := dbop.UserLogin(ubody.UserName)
+	userInfo, password, err := dbop.UserLogin(ubody.Email)
 	fmt.Println(password)
 	fmt.Println(userInfo)
 	if err != nil {
@@ -36,7 +36,7 @@ func LoginByMail(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if password == ubody.Password {
 		//fmt.Println("Login successfully!")
 
-		id := session.GenerateNewSessionID(ubody.UserName)
+		id := session.GenerateNewSessionID(userInfo.Cid)
 		su := &defs.SignedUp{Success:true, SessionId:id, Cid:userInfo.Cid, Name:userInfo.Name, Email:userInfo.Email, Auth:userInfo.Auth}
 
 		if resp, err := json.Marshal(su); err != nil {
@@ -83,4 +83,29 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 //路由测试函数，目前没有太大用处
 func Handle(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	fmt.Fprintf(w, "111111111111111111111111111111\n")
+}
+
+
+func CrteateLiveRoom(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	liveInfo := &defs.LiveRoomIdentity{}
+	liveInfo.Lid = "000001"
+	liveInfo.Name = "ljc"
+	liveInfo.Kind = "1"
+	liveInfo.Size = "100"
+	liveInfo.StartTime = "2006-01-02 15:04:05"
+	liveInfo.EndTime = "2006-01-02 15:04:05"
+	liveInfo.PushUrl = "www.baidu.com"
+	liveInfo.PullHlsUrl = "www.google.com"
+	liveInfo.PullRtmpUrl = "rtmp://www.ljc.com"
+	liveInfo.PullHttpFlvUrl = "www.hlv.com"
+	liveInfo.DisplayUrl = "www.display.com"
+	liveInfo.Status = "5"
+	liveInfo.Permission = "Auth users"
+
+	if resp, err := json.Marshal(liveInfo); err != nil {
+		sendErrorResponse(w, defs.ErrorInternalFaults)
+		return
+	} else {
+		sendNormalResponse(w, string(resp),200)
+	}
 }
