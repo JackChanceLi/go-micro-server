@@ -8,14 +8,14 @@ import (
 	"sync"
 )
 
-func InsertSession(sid string, ttl int64, uname string) error {
+func InsertSession(sid string, ttl int64, uid string) error {
 	ttlStr := strconv.FormatInt(ttl,10)
-	stmtIns,err := dbConn.Prepare("INSERT INTO sessions (session_id, TTL, login_name) VALUES (?, ?, ?)")
+	stmtIns,err := dbConn.Prepare("INSERT INTO sessions (session_id, TTL, uid) VALUES (?, ?, ?)")
 	if err != nil {
 		return err
 	}
 
-	_,err = stmtIns.Exec(sid, ttlStr, uname)
+	_,err = stmtIns.Exec(sid, ttlStr, uid)
 	if err != nil {
 		return err
 	}
@@ -26,7 +26,7 @@ func InsertSession(sid string, ttl int64, uname string) error {
 
 func RetrieveSession(sid string) (*defs.Session, error) {
 	ss := &defs.Session{}
-	stmtOut, err := dbConn.Prepare("SELECT TTL, login_name FROM sessions WHERE session_id = ?")
+	stmtOut, err := dbConn.Prepare("SELECT TTL, uid FROM sessions WHERE session_id = ?")
 	if err != nil {
 		return nil,err
 	}
@@ -40,7 +40,7 @@ func RetrieveSession(sid string) (*defs.Session, error) {
 
 	if res, err := strconv.ParseInt(ttl, 10,64); err == nil {
 		ss.TTL = res
-		ss.UserName = uname
+		ss.Uid = uname
 	} else {
 		return nil, err
 	}
@@ -65,13 +65,13 @@ func RetrieveAllSessions() (*sync.Map, error) {
 	for rows.Next() {
 		var id string
 		var ttlstr string
-		var loginName string
-		if er := rows.Scan(&id, &ttlstr, &loginName); er != nil {
+		var uid string
+		if er := rows.Scan(&id, &ttlstr, &uid); er != nil {
 			log.Printf("retrieve sessions error: %s", er)
 			break
 		}
 		if ttl, err1 := strconv.ParseInt(ttlstr, 10, 64); err1 == nil {
-			ss := &defs.Session{UserName:loginName, TTL:ttl}
+			ss := &defs.Session{Uid: uid, TTL:ttl}
 			m.Store(id,ss)
 			log.Printf("Session id:%s, ttl:%d", id, ss.TTL)
 		}
@@ -93,14 +93,14 @@ func DeleteSession(sid string) error {
 
 	return nil
 }
-func DeleteSessionByName(LoginName string) error {
-	stmtOut, err := dbConn.Prepare("DELETE FROM sessions WHERE login_name = ?")
+func DeleteSessionByName(Uid string) error {
+	stmtOut, err := dbConn.Prepare("DELETE FROM sessions WHERE uid = ?")
 	if err != nil {
 		log.Printf("%s",err)
 		return err
 	}
 
-	if _, err := stmtOut.Query(LoginName); err != nil {
+	if _, err := stmtOut.Query(Uid); err != nil {
 		return err
 	}
 
